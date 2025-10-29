@@ -5,6 +5,8 @@ import org.example.blogmanagement.DTOs.UserResponseDTO;
 import org.example.blogmanagement.Services.UserService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -18,5 +20,10 @@ public class UserController {
     @PostMapping()
     public UserResponseDTO createUser (@RequestBody UserInputDTO userInputDTO){
         return userService.createUser(userInputDTO);
+    }
+
+    @GetMapping()
+    public List<UserResponseDTO> getAllUsers(){
+        return userService.getAllUsers();
     }
 }

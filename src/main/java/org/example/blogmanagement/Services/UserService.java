@@ -7,6 +7,8 @@ import org.example.blogmanagement.Repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -27,6 +29,13 @@ public class UserService {
         userRepo.save(user);
 
         return new UserResponseDTO(user.getUsername(),user.getEmail());
+    }
+
+    public List<UserResponseDTO> getAllUsers() {
+        return userRepo.findAll()
+                .stream()
+                .map(user -> new UserResponseDTO(user.getUsername(), user.getEmail()))
+                .collect(Collectors.toList());
     }
 
 }
