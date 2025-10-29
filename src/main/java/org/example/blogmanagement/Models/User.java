@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -19,7 +20,7 @@ public class User {
     private int id;
 
     @Column(name = "username")
-    private String userName;
+    private String username;
 
     @Column(name = "email")
     private String email;
@@ -27,9 +28,22 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "created_at", updatable = false)
-    private LocalDate created_at;
+    @Column(name = "created_at")
+    private LocalDateTime created_at;
 
     @Column(name = "updated_at")
-    private LocalDate updated_at;
+    private LocalDateTime  updated_at;
+
+    @PrePersist
+    protected void onCreate() {
+        // Set both timestamps when the entity is first persisted
+        this.created_at = LocalDateTime.now();
+        this.updated_at = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        // Only update the 'updated_at' timestamp on subsequent saves
+        this.updated_at = LocalDateTime.now();
+    }
 }
