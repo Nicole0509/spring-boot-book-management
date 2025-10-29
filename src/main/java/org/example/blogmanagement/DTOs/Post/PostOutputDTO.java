@@ -1,0 +1,19 @@
+package org.example.blogmanagement.DTOs.Post;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.example.blogmanagement.Models.Comment;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class PostOutputDTO {
+    private String title;
+    private String content;
+    private LocalDateTime  updated_at;
+    private List<Comment> comments;
+}

@@ -1,38 +1,33 @@
 package org.example.blogmanagement.Models;
 
-import jakarta.persistence.*;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name = "users")
-public class User {
+@Document(collection = "posts")
+public class Post {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private int id;
+    private String id;
 
-    @Column(name = "username")
-    private String username;
-
-    @Column(name = "email")
-    private String email;
-
-    @Column(name = "password")
-    private String password;
-
-    @Column(name = "created_at")
+    @Field(name = "title")
+    private String title;
+    private String content;
+    private Long author_id;
     private LocalDateTime created_at;
-
-    @Column(name = "updated_at")
     private LocalDateTime  updated_at;
+    private List<Comment> comments;
 
     @PrePersist
     protected void onCreate() {

@@ -1,7 +1,7 @@
 package org.example.blogmanagement.Controllers;
 
-import org.example.blogmanagement.DTOs.UserInputDTO;
-import org.example.blogmanagement.DTOs.UserResponseDTO;
+import org.example.blogmanagement.DTOs.User.UserInputDTO;
+import org.example.blogmanagement.DTOs.User.UserResponseDTO;
 import org.example.blogmanagement.Services.UserService;
 import org.springframework.web.bind.annotation.*;
 

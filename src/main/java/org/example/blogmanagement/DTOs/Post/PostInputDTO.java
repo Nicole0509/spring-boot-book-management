@@ -1,4 +1,4 @@
-package org.example.blogmanagement.DTOs;
+package org.example.blogmanagement.DTOs.Post;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserResponseDTO {
-    private String username;
-    private String email;
+public class PostInputDTO {
+    private String title;
+    private String content;
 }
