@@ -4,6 +4,7 @@ import org.example.blogmanagement.DTOs.User.UserInputDTO;
 import org.example.blogmanagement.DTOs.User.UserResponseDTO;
 import org.example.blogmanagement.Models.User;
 import org.example.blogmanagement.Repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,11 +13,8 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
 
-    private final UserRepository userRepo;
-
-    public UserService(UserRepository userRepo) {
-        this.userRepo = userRepo;
-    }
+    @Autowired
+    private UserRepository userRepo;
 
     public UserResponseDTO createUser (UserInputDTO userInputDTO) {
         User user = new User();

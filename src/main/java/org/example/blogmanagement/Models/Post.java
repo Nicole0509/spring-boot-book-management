@@ -1,10 +1,10 @@
 package org.example.blogmanagement.Models;
 
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -23,20 +23,17 @@ public class Post {
 
     @Field(name = "title")
     private String title;
+
     private String content;
+
     private Long author_id;
+
+    @CreatedDate
     private LocalDateTime created_at;
+
+    @LastModifiedDate
     private LocalDateTime  updated_at;
+
     private List<Comment> comments;
 
-    @PrePersist
-    protected void onCreate() {
-        this.created_at = LocalDateTime.now();
-        this.updated_at = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updated_at = LocalDateTime.now();
-    }
 }

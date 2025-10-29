@@ -1,9 +1,9 @@
 package org.example.blogmanagement.Repositories;
 
-import org.example.blogmanagement.Models.Post;
+import org.example.blogmanagement.Models.Comment;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PostRepository extends MongoRepository<Post,String> {
+public interface CommentRepository extends MongoRepository<Comment,String> {
 }

@@ -5,6 +5,7 @@ import jakarta.persistence.PreUpdate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.annotation.Id;
 
@@ -17,19 +18,15 @@ import java.time.LocalDateTime;
 public class Comment {
     @Id
     private String id;
+
     private String content;
+
     private Long author_id;
+
+    @LastModifiedDate
     private LocalDateTime created_at;
-    private LocalDateTime updated_at;
 
-    @PrePersist
-    protected void onCreate() {
-        this.created_at = LocalDateTime.now();
-        this.updated_at = LocalDateTime.now();
-    }
+    @LastModifiedDate
+    private LocalDateTime  updated_at;
 
-    @PreUpdate
-    protected void onUpdate() {
-        this.updated_at = LocalDateTime.now();
-    }
 }
