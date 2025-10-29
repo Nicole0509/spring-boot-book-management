@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: BlogManagement
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    password: Nicole0509
+    username: postgres
+    url: jdbc:postgresql://localhost:5432/blog_management
+
+server:
+  port: 8081
