@@ -43,10 +43,10 @@ public class PostService {
 
         postRepo.save(post);
 
-        return new PostOutputDTO(post.getTitle(), post.getContent(), user.getUsername(), user.getEmail(), post.getCreated_at(), commentDTO(post.getComments(),user));
+        return new PostOutputDTO(post.getTitle(), post.getContent(), user.getUsername(), user.getEmail(), post.getCreated_at(), commentDTO(post.getComments(),user, post.getId()));
     }
 
-    private List<CommentOutputDTO> commentDTO(List<Comment> comments, User user){
+    private List<CommentOutputDTO> commentDTO(List<Comment> comments, User user, String post_id) {
         if (comments==null || comments.isEmpty()){
             return new ArrayList<>();
         }
@@ -56,5 +56,13 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
-//    public PostOutputDTO createPost
+    public List<PostOutputDTO> getAllPosts() {
+        User user = new User();
+        Post posts = new Post();
+
+        return postRepo.findAll()
+                .stream()
+                .map(post -> new PostOutputDTO(post.getTitle(), post.getContent(), user.getUsername(),user.getEmail(), post.getCreated_at(), commentDTO(post.getComments(), user, posts.getId())))
+                .collect(Collectors.toList());
+    }
 }

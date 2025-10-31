@@ -7,6 +7,8 @@ import org.example.blogmanagement.Services.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/post")
 public class PostController {
@@ -22,4 +24,8 @@ public class PostController {
         return postService.createPost(postInputDTO);
     }
 
+    @GetMapping
+    public List<PostOutputDTO> getAllPosts(){
+        return postService.getAllPosts();
+    }
 }
