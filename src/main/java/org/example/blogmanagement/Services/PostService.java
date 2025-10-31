@@ -47,16 +47,21 @@ public class PostService {
 
         postRepo.save(post);
 
-        return new PostOutputDTO(post.getTitle(), post.getContent(), user.getUsername(), user.getEmail(), post.getCreated_at(), commentDTO(post.getComments(),user));
+        return new PostOutputDTO(post.getTitle(), post.getContent(), user.getUsername(), user.getEmail(), post.getCreated_at(), commentDTO(post.getComments()));
     }
 
-    private List<CommentOutputDTO> commentDTO(List<Comment> comments, User user) {
+    private List<CommentOutputDTO> commentDTO(List<Comment> comments) {
         if (comments==null || comments.isEmpty()){
             return new ArrayList<>();
         }
 
         return comments.stream()
-                .map(comment -> new CommentOutputDTO(comment.getContent(), user.getUsername(), user.getEmail(), comment.getCreated_at()))
+                .map(comment -> {
+                    User commentAuthor = userRepo.findById(comment.getAuthor_id())
+                            .orElseThrow(() -> new ResourceNotFound("User with id '" + comment.getAuthor_id() + "' was not found"));
+
+                    return new CommentOutputDTO(comment.getContent(), commentAuthor.getUsername(), commentAuthor.getEmail(), comment.getCreated_at());
+                })
                 .collect(Collectors.toList());
     }
 
@@ -72,10 +77,9 @@ public class PostService {
                     List<Comment> comments = commentRepo.findByPostId(post.getId());
 
                     // Converting the comments to comment DTOs
-                    List<CommentOutputDTO> commentDTOs = commentDTO(comments, user);
+                    List<CommentOutputDTO> commentDTOs = commentDTO(comments);
 
                     // Returning the final PostOutputDTO
-
                     return new PostOutputDTO(post.getTitle(), post.getContent(), user.getUsername(), user.getEmail(), post.getCreated_at(), commentDTOs);
                 })
                 .collect(Collectors.toList());
