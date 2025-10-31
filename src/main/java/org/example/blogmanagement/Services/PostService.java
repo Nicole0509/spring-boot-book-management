@@ -1,8 +1,10 @@
 package org.example.blogmanagement.Services;
 
+import org.example.blogmanagement.DTOs.Comment.CommentOutputDTO;
 import org.example.blogmanagement.DTOs.Post.PostInputDTO;
 import org.example.blogmanagement.DTOs.Post.PostOutputDTO;
 import org.example.blogmanagement.Exceptions.ResourceNotFound;
+import org.example.blogmanagement.Models.Comment;
 import org.example.blogmanagement.Models.Post;
 import org.example.blogmanagement.Models.User;
 import org.example.blogmanagement.Repositories.PostRepository;
@@ -11,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -38,6 +43,18 @@ public class PostService {
 
         postRepo.save(post);
 
-        return new PostOutputDTO(post.getTitle(), post.getContent(), user.getUsername(), user.getEmail(), post.getCreated_at());
+        return new PostOutputDTO(post.getTitle(), post.getContent(), user.getUsername(), user.getEmail(), post.getCreated_at(), commentDTO(post.getComments(),user));
     }
+
+    private List<CommentOutputDTO> commentDTO(List<Comment> comments, User user){
+        if (comments==null || comments.isEmpty()){
+            return new ArrayList<>();
+        }
+
+        return comments.stream()
+                .map(comment -> new CommentOutputDTO(comment.getContent(), user.getUsername(), user.getEmail(), comment.getCreated_at()))
+                .collect(Collectors.toList());
+    }
+
+//    public PostOutputDTO createPost
 }

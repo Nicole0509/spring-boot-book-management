@@ -34,4 +34,5 @@ public class Post {
     @LastModifiedDate
     private LocalDateTime  updated_at;
 
+    private List<Comment> comments;
 }
