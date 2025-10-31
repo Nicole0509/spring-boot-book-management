@@ -17,7 +17,7 @@ public class CommentService {
         Comment comment = new Comment();
 
         comment.setContent(commentInputDTO.getContent());
-        comment.setAuthor_id(1L);
+        comment.setAuthor_id(1);
 
         commentRepo.save(comment);
 

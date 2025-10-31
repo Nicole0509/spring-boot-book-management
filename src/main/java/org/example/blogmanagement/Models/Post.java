@@ -26,7 +26,7 @@ public class Post {
 
     private String content;
 
-    private Long author_id;
+    private int author_id;
 
     @CreatedDate
     private LocalDateTime created_at;

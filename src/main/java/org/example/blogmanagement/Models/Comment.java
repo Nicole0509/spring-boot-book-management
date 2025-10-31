@@ -1,10 +1,9 @@
 package org.example.blogmanagement.Models;
 
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.annotation.Id;
@@ -21,9 +20,9 @@ public class Comment {
 
     private String content;
 
-    private Long author_id;
+    private int author_id;
 
-    @LastModifiedDate
+    @CreatedDate
     private LocalDateTime created_at;
 
     @LastModifiedDate

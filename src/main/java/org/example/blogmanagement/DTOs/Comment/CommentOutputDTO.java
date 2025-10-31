@@ -3,6 +3,7 @@ package org.example.blogmanagement.DTOs.Comment;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -11,6 +12,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class CommentOutputDTO {
     private String content;
-    private Long author_id;
-    private LocalDateTime updated_at;
+    private int author_id;
+    private LocalDateTime created_at;
 }
