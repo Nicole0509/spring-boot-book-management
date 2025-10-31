@@ -38,6 +38,6 @@ public class PostService {
 
         postRepo.save(post);
 
-        return new PostOutputDTO(post.getTitle(), post.getContent(), user.getUsername(), user.getEmail(), post.getCreated_at(), post.getComments());
+        return new PostOutputDTO(post.getTitle(), post.getContent(), user.getUsername(), user.getEmail(), post.getCreated_at());
     }
 }

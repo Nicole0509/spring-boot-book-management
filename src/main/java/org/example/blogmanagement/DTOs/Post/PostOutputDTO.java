@@ -17,5 +17,4 @@ public class PostOutputDTO {
     private String author;
     private String author_email;
     private LocalDateTime  updated_at;
-    private List<Comment> comments;
 }
