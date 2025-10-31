@@ -38,7 +38,7 @@ public class CommentService {
 
         comment.setContent(commentInputDTO.getContent());
         comment.setAuthor_id(user.getId());
-        comment.setPost_id(post.getId());
+        comment.setPostId(post.getId());
 
         commentRepo.save(comment);
 

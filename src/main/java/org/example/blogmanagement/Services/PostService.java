@@ -7,6 +7,7 @@ import org.example.blogmanagement.Exceptions.ResourceNotFound;
 import org.example.blogmanagement.Models.Comment;
 import org.example.blogmanagement.Models.Post;
 import org.example.blogmanagement.Models.User;
+import org.example.blogmanagement.Repositories.CommentRepository;
 import org.example.blogmanagement.Repositories.PostRepository;
 import org.example.blogmanagement.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,9 @@ public class PostService {
     @Autowired
     private UserRepository userRepo;
 
+    @Autowired
+    private CommentRepository commentRepo;
+
     public PostOutputDTO createPost(PostInputDTO postInputDTO) {
         // Find the user by email from PostgreSQL
 
@@ -43,10 +47,10 @@ public class PostService {
 
         postRepo.save(post);
 
-        return new PostOutputDTO(post.getTitle(), post.getContent(), user.getUsername(), user.getEmail(), post.getCreated_at(), commentDTO(post.getComments(),user, post.getId()));
+        return new PostOutputDTO(post.getTitle(), post.getContent(), user.getUsername(), user.getEmail(), post.getCreated_at(), commentDTO(post.getComments(),user));
     }
 
-    private List<CommentOutputDTO> commentDTO(List<Comment> comments, User user, String post_id) {
+    private List<CommentOutputDTO> commentDTO(List<Comment> comments, User user) {
         if (comments==null || comments.isEmpty()){
             return new ArrayList<>();
         }
@@ -56,13 +60,26 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
-    public List<PostOutputDTO> getAllPosts() {
-        User user = new User();
-        Post posts = new Post();
-
+    public List<PostOutputDTO> getAllPosts(){
         return postRepo.findAll()
                 .stream()
-                .map(post -> new PostOutputDTO(post.getTitle(), post.getContent(), user.getUsername(),user.getEmail(), post.getCreated_at(), commentDTO(post.getComments(), user, posts.getId())))
+                .map(post -> {
+                    // Looking for the user associated to a post
+                    User user = userRepo.findById(post.getAuthor_id())
+                            .orElseThrow(() -> new ResourceNotFound("This post is not attached to an author!"));
+
+                    // Fetching all the comments connected to a post
+                    List<Comment> comments = commentRepo.findByPostId(post.getId());
+
+                    // Converting the comments to comment DTOs
+                    List<CommentOutputDTO> commentDTOs = commentDTO(comments, user);
+
+                    // Returning the final PostOutputDTO
+
+                    return new PostOutputDTO(post.getTitle(), post.getContent(), user.getUsername(), user.getEmail(), post.getCreated_at(), commentDTOs);
+                })
                 .collect(Collectors.toList());
     }
+
 }
+
