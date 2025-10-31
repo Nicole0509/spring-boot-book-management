@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CommentInputDTO {
     private String content;
+    private String author_email;
 }

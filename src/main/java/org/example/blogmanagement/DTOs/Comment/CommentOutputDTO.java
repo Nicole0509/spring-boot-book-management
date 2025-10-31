@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class CommentOutputDTO {
     private String content;
-    private int author_id;
+    private String author;
+    private String author_email;
     private LocalDateTime created_at;
 }

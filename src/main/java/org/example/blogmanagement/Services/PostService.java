@@ -2,7 +2,6 @@ package org.example.blogmanagement.Services;
 
 import org.example.blogmanagement.DTOs.Post.PostInputDTO;
 import org.example.blogmanagement.DTOs.Post.PostOutputDTO;
-import org.example.blogmanagement.Exceptions.ResourceAlreadyExists;
 import org.example.blogmanagement.Exceptions.ResourceNotFound;
 import org.example.blogmanagement.Models.Post;
 import org.example.blogmanagement.Models.User;
