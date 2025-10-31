@@ -14,6 +14,8 @@ import java.util.List;
 public class PostOutputDTO {
     private String title;
     private String content;
+    private String author;
+    private String author_email;
     private LocalDateTime  updated_at;
     private List<Comment> comments;
 }

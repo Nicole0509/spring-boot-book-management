@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class PostInputDTO {
     private String title;
     private String content;
-    private int author_id;
+    private String author_email;
 }

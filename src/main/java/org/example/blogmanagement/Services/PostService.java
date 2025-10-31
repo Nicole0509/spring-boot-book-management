@@ -2,6 +2,7 @@ package org.example.blogmanagement.Services;
 
 import org.example.blogmanagement.DTOs.Post.PostInputDTO;
 import org.example.blogmanagement.DTOs.Post.PostOutputDTO;
+import org.example.blogmanagement.Exceptions.ResourceAlreadyExists;
 import org.example.blogmanagement.Exceptions.ResourceNotFound;
 import org.example.blogmanagement.Models.Post;
 import org.example.blogmanagement.Models.User;
@@ -22,21 +23,22 @@ public class PostService {
     private UserRepository userRepo;
 
     public PostOutputDTO createPost(PostInputDTO postInputDTO) {
-        //Check if user exists in Postgres
-        User user = userRepo.findById(postInputDTO.getAuthor_id())
-                .orElseThrow(() -> new ResourceNotFound("User not found with ID: " + postInputDTO.getAuthor_id()));
+        // Find the user by email from PostgreSQL
+
+        User user = userRepo.findByEmail(postInputDTO.getAuthor_email())
+                .orElseThrow(() -> new ResourceNotFound("User with email '" + postInputDTO.getAuthor_email() + "' was not found"));
 
         // Create A Post
         Post post  = new Post();
 
         post.setTitle(postInputDTO.getTitle());
         post.setContent(postInputDTO.getContent());
-        post.setAuthor_id(postInputDTO.getAuthor_id());
+        post.setAuthor_id(user.getId());
         post.setCreated_at(LocalDateTime.now());
         post.setUpdated_at(LocalDateTime.now());
 
         postRepo.save(post);
 
-        return new PostOutputDTO(post.getTitle(), post.getContent(), post.getCreated_at(), post.getComments());
+        return new PostOutputDTO(post.getTitle(), post.getContent(), user.getUsername(), user.getEmail(), post.getCreated_at(), post.getComments());
     }
 }
