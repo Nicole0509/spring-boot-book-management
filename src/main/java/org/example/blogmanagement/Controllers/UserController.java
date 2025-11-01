@@ -3,6 +3,7 @@ package org.example.blogmanagement.Controllers;
 import org.example.blogmanagement.DTOs.User.UserInputDTO;
 import org.example.blogmanagement.DTOs.User.UserResponseDTO;
 import org.example.blogmanagement.Services.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,6 +39,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUserById(@PathVariable int id){
         userService.deleteUserById(id);
     }

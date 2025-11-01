@@ -24,14 +24,18 @@ public class Post {
     @Field(name = "title")
     private String title;
 
+    @Field(name = "content")
     private String content;
 
-    private int author_id;
+    @Field(name = "author_id")
+    private int authorId;
 
     @CreatedDate
+    @Field(name = "created_at")
     private LocalDateTime created_at;
 
     @LastModifiedDate
+    @Field(name = "updated_at")
     private LocalDateTime  updated_at;
 
     private List<Comment> comments;

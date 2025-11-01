@@ -7,6 +7,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
 
@@ -18,16 +19,21 @@ public class Comment {
     @Id
     private String id;
 
+    @Field(name = "content")
     private String content;
 
-    private int author_id;
+    @Field(name = "author_id")
+    private int authorId;
 
+    @Field(name = "postId")
     private String postId;
 
     @CreatedDate
+    @Field(name = "created_at")
     private LocalDateTime created_at;
 
     @LastModifiedDate
+    @Field(name = "updated_at")
     private LocalDateTime  updated_at;
 
 }

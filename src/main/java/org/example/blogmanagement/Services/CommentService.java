@@ -39,7 +39,7 @@ public class CommentService {
         Comment comment = new Comment();
 
         comment.setContent(commentInputDTO.getContent());
-        comment.setAuthor_id(user.getId());
+        comment.setAuthorId(user.getId());
         comment.setPostId(post.getId());
 
         commentRepo.save(comment);
@@ -50,7 +50,7 @@ public class CommentService {
     public CommentOutputDTO getAllCommentById(String id) {
         return commentRepo.findById(id)
                 .map(comment -> {
-                    User user = userRepo.findById(comment.getAuthor_id())
+                    User user = userRepo.findById(comment.getAuthorId())
                             .orElseThrow(() -> new ResourceNotFound("This comment is not attached to an author"));
 
                     return new CommentOutputDTO(comment.getContent(), user.getUsername(), user.getEmail(), comment.getCreated_at());
@@ -81,5 +81,9 @@ public class CommentService {
 
     public void deleteCommentByPostId(String postId) {
         commentRepo.deleteByPostId(postId);
+    }
+
+    public void deleteCommentByAuthorId(int authorId) {
+        commentRepo.deleteByAuthorId(authorId);
     }
 }

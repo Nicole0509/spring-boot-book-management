@@ -13,4 +13,6 @@ public interface CommentRepository extends MongoRepository<Comment,String> {
     boolean existsById(String id);
 
     void deleteByPostId(String postId);
+
+    void deleteByAuthorId(int authorId);
 }

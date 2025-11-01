@@ -18,6 +18,12 @@ public class UserService {
     @Autowired
     private UserRepository userRepo;
 
+    @Autowired
+    private PostService postService;
+
+    @Autowired
+    private CommentService commentService;
+
     public UserResponseDTO createUser (UserInputDTO userInputDTO) {
         //Check if an email is not already taken
         if(userRepo.existsByEmail(userInputDTO.getEmail())) {
@@ -73,11 +79,12 @@ public class UserService {
     }
 
     public void deleteUserById(int id) {
-        // Checking if a user exists
         if(!userRepo.existsById(id)) {
             throw new ResourceNotFound("User with id '" + id + "' was not found!");
         }
 
+        commentService.deleteCommentByAuthorId(id);
+        postService.deletePostByAuthorId(id);
         userRepo.deleteById(id);
     }
 }

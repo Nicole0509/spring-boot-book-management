@@ -4,6 +4,7 @@ import org.example.blogmanagement.DTOs.Comment.CommentInputDTO;
 import org.example.blogmanagement.DTOs.Comment.CommentOutputDTO;
 import org.example.blogmanagement.Services.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -32,6 +33,7 @@ public class CommentController {
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteComment(@PathVariable String id) {
         commentService.deleteComment(id);
     }

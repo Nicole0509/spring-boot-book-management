@@ -40,8 +40,8 @@ public class PostService {
 
         return comments.stream()
                 .map(comment -> {
-                    User commentAuthor = userRepo.findById(comment.getAuthor_id())
-                            .orElseThrow(() -> new ResourceNotFound("User with id '" + comment.getAuthor_id() + "' was not found"));
+                    User commentAuthor = userRepo.findById(comment.getAuthorId())
+                            .orElseThrow(() -> new ResourceNotFound("User with id '" + comment.getAuthorId() + "' was not found"));
 
                     return new CommentOutputDTO(comment.getContent(), commentAuthor.getUsername(), commentAuthor.getEmail(), comment.getCreated_at());
                 })
@@ -50,7 +50,7 @@ public class PostService {
 
     private PostOutputDTO post(Post post){
 
-        User user = userRepo.findById(post.getAuthor_id())
+        User user = userRepo.findById(post.getAuthorId())
                 .orElseThrow(() -> new ResourceNotFound("This post is not attached to an author!"));
 
         List<Comment> comments = commentRepo.findByPostId(post.getId());
@@ -71,7 +71,7 @@ public class PostService {
 
         post.setTitle(postInputDTO.getTitle());
         post.setContent(postInputDTO.getContent());
-        post.setAuthor_id(user.getId());
+        post.setAuthorId(user.getId());
         post.setCreated_at(LocalDateTime.now());
         post.setUpdated_at(LocalDateTime.now());
 
@@ -106,15 +106,23 @@ public class PostService {
     }
 
     public void deletePost(String postId) {
-
-        if(postRepo.existsById(postId)){
-            commentService.deleteCommentByPostId(postId);
-            postRepo.deleteById(postId);
-
-        } else {
+        if(!postRepo.existsById(postId)){
             throw new ResourceNotFound("Post with id '" + postId + "' was not found");
         }
 
+        commentService.deleteCommentByPostId(postId);
+
+        postRepo.deleteById(postId);
+
+    }
+
+    public void deletePostByAuthorId(int authorId) {
+        List<Post> posts = postRepo.findByAuthorId(authorId);
+
+        for (Post post : posts) {
+            commentService.deleteCommentByPostId(post.getId());
+        }
+        postRepo.deleteAll(posts);
     }
 }
 
