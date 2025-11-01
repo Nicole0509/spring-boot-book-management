@@ -127,7 +127,7 @@ public class UserController {
             summary = "Deletes A User's Credentials and Cascades",
             responses = {
                     @ApiResponse(
-                            description = "Success",
+                            description = "Success/No Content",
                             responseCode = "204"
                     ),
                     @ApiResponse(
