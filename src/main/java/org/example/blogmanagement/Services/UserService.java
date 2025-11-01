@@ -2,6 +2,7 @@ package org.example.blogmanagement.Services;
 
 import org.example.blogmanagement.DTOs.User.UserInputDTO;
 import org.example.blogmanagement.DTOs.User.UserResponseDTO;
+import org.example.blogmanagement.Exceptions.ResourceNotFound;
 import org.example.blogmanagement.Models.User;
 import org.example.blogmanagement.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,12 @@ public class UserService {
                 .stream()
                 .map(user -> new UserResponseDTO(user.getUsername(), user.getEmail()))
                 .collect(Collectors.toList());
+    }
+
+    public UserResponseDTO getUserById(int id) {
+        return userRepo.findById(id)
+                .map(user -> new UserResponseDTO(user.getUsername(),user.getEmail()))
+                .orElseThrow(() -> new ResourceNotFound("User with id '" + id + "' was not found!"));
     }
 
 }
