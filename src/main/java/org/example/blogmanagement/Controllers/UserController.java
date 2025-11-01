@@ -119,7 +119,7 @@ public class UserController {
             }
     )
     @PutMapping("/{id}")
-    public UserResponseDTO updateUserById(@PathVariable int id, @RequestBody UserInputDTO userInputDTO){
+    public UserResponseDTO updateUserById(@PathVariable int id,@Valid @RequestBody UserInputDTO userInputDTO){
         return userService.updateUserById(id, userInputDTO);
     }
 
