@@ -9,5 +9,8 @@ import java.util.List;
 @Repository
 public interface CommentRepository extends MongoRepository<Comment,String> {
     List<Comment> findByPostId(String postId);
+
     boolean existsById(String id);
+
+    void deleteByPostId(String postId);
 }

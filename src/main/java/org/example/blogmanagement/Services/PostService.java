@@ -30,6 +30,9 @@ public class PostService {
     @Autowired
     private CommentRepository commentRepo;
 
+    @Autowired
+    private CommentService commentService;
+
     private List<CommentOutputDTO> commentDTO(List<Comment> comments) {
         if (comments==null || comments.isEmpty()){
             return new ArrayList<>();
@@ -102,5 +105,16 @@ public class PostService {
                 }).orElseThrow(() -> new ResourceNotFound("Post with id '" + postId + "' was not found"));
     }
 
+    public void deletePost(String postId) {
+
+        if(postRepo.existsById(postId)){
+            commentService.deleteCommentByPostId(postId);
+            postRepo.deleteById(postId);
+
+        } else {
+            throw new ResourceNotFound("Post with id '" + postId + "' was not found");
+        }
+
+    }
 }
 

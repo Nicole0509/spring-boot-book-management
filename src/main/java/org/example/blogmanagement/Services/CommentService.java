@@ -12,6 +12,8 @@ import org.example.blogmanagement.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CommentService {
 
@@ -75,5 +77,9 @@ public class CommentService {
             throw new ResourceNotFound("Comment with ID '" + commentId + "' was not found");
         }
         commentRepo.deleteById(commentId);
+    }
+
+    public void deleteCommentByPostId(String postId) {
+        commentRepo.deleteByPostId(postId);
     }
 }

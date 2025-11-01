@@ -38,4 +38,10 @@ public class PostController {
     public PostOutputDTO updatePost(@PathVariable String id, @RequestBody PostInputDTO postInputDTO){
         return postService.updatePost(id, postInputDTO);
     }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deletePost(@PathVariable String id){
+        postService.deletePost(id);
+    }
 }
