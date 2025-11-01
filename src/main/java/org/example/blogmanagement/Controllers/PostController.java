@@ -124,8 +124,8 @@ public class PostController {
     }
 
     @Operation(
-            description = "This endpoint deletes a user's credentials, all their corresponding posts and comments and all the comments related to this particular user's posts.",
-            summary = "Deletes A User's Credentials and Cascades",
+            description = "This endpoint deletes a post its corresponding comments.",
+            summary = "Deletes A Post's Credentials and Cascades",
             responses = {
                     @ApiResponse(
                             description = "Success/No Content",

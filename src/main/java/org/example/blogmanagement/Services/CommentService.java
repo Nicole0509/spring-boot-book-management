@@ -12,7 +12,7 @@ import org.example.blogmanagement.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Service
 public class CommentService {
@@ -65,6 +65,7 @@ public class CommentService {
         return commentRepo.findById(commentId).map(
                 comment -> {
                     comment.setContent(commentInputDTO.getContent());
+                    comment.setUpdated_at(LocalDateTime.now());
                     commentRepo.save(comment);
 
                     return getAllCommentById(commentId);
