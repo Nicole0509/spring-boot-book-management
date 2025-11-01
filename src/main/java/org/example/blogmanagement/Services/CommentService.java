@@ -44,4 +44,28 @@ public class CommentService {
 
         return new CommentOutputDTO(comment.getContent(), user.getUsername(), user.getEmail(), comment.getCreated_at());
     }
+
+    public CommentOutputDTO getAllCommentById(String id) {
+        return commentRepo.findById(id)
+                .map(comment -> {
+                    User user = userRepo.findById(comment.getAuthor_id())
+                            .orElseThrow(() -> new ResourceNotFound("This comment is not attached to an author"));
+
+                    return new CommentOutputDTO(comment.getContent(), user.getUsername(), user.getEmail(), comment.getCreated_at());
+                })
+                .orElseThrow(() -> new ResourceNotFound("Comment with ID '" + id + "' was not found"));
+    }
+
+
+//    public CommentOutputDTO updateComment(CommentInputDTO commentInputDTO, String commentId) {
+//        return commentRepo.findById(commentId).ifPresent(
+//                comment -> {
+//                    comment.setContent(commentInputDTO.getContent());
+//                    commentRepo.save(comment);
+//
+//                    return new CommentOutputDTO(comment.getContent(),comment.ge)
+//
+//                }
+//        );
+//    }
 }
