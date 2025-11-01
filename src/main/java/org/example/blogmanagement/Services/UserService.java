@@ -8,6 +8,7 @@ import org.example.blogmanagement.Models.User;
 import org.example.blogmanagement.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -78,6 +79,7 @@ public class UserService {
         return getUserById(id);
     }
 
+    @Transactional
     public void deleteUserById(int id) {
         if(!userRepo.existsById(id)) {
             throw new ResourceNotFound("User with id '" + id + "' was not found!");

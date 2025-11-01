@@ -12,6 +12,7 @@ import org.example.blogmanagement.Repositories.PostRepository;
 import org.example.blogmanagement.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -105,6 +106,7 @@ public class PostService {
                 }).orElseThrow(() -> new ResourceNotFound("Post with id '" + postId + "' was not found"));
     }
 
+    @Transactional
     public void deletePost(String postId) {
         if(!postRepo.existsById(postId)){
             throw new ResourceNotFound("Post with id '" + postId + "' was not found");
@@ -116,6 +118,7 @@ public class PostService {
 
     }
 
+    @Transactional
     public void deletePostByAuthorId(int authorId) {
         List<Post> posts = postRepo.findByAuthorId(authorId);
 
