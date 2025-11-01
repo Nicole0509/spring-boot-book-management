@@ -58,6 +58,8 @@ public class CommentService {
 
 
     public CommentOutputDTO updateComment(CommentInputDTO commentInputDTO, String commentId) {
+
+        // Patching a comment's content
         return commentRepo.findById(commentId).map(
                 comment -> {
                     comment.setContent(commentInputDTO.getContent());
@@ -66,5 +68,12 @@ public class CommentService {
                     return getAllCommentById(commentId);
                 }
         ).orElseThrow(() -> new ResourceNotFound("Comment with ID '" + commentId + "' was not found"));
+    }
+
+    public void deleteComment(String commentId) {
+        if (!commentRepo.existsById(commentId)) {
+            throw new ResourceNotFound("Comment with ID '" + commentId + "' was not found");
+        }
+        commentRepo.deleteById(commentId);
     }
 }

@@ -30,4 +30,9 @@ public class CommentController {
     public CommentOutputDTO updateComment(@PathVariable String id, @RequestBody CommentInputDTO commentInputDTO) {
         return commentService.updateComment(commentInputDTO, id);
     }
+
+    @DeleteMapping("/{id}")
+    public void deleteComment(@PathVariable String id) {
+        commentService.deleteComment(id);
+    }
 }
