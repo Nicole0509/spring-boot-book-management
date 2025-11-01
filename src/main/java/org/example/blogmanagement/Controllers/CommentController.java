@@ -3,6 +3,7 @@ package org.example.blogmanagement.Controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.example.blogmanagement.DTOs.Comment.CommentInputDTO;
 import org.example.blogmanagement.DTOs.Comment.CommentOutputDTO;
 import org.example.blogmanagement.Services.CommentService;
@@ -40,7 +41,7 @@ public class CommentController {
             }
     )
     @PostMapping
-    public CommentOutputDTO createComment(@RequestBody CommentInputDTO commentInputDTO) {
+    public CommentOutputDTO createComment(@Valid @RequestBody CommentInputDTO commentInputDTO) {
         return commentService.createComment(commentInputDTO);
     }
 
@@ -94,7 +95,7 @@ public class CommentController {
             }
     )
     @PatchMapping("/{id}")
-    public CommentOutputDTO updateComment(@PathVariable String id, @RequestBody CommentInputDTO commentInputDTO) {
+    public CommentOutputDTO updateComment(@PathVariable String id, @Valid @RequestBody CommentInputDTO commentInputDTO) {
         return commentService.updateComment(commentInputDTO, id);
     }
 
