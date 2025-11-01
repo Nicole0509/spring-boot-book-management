@@ -4,6 +4,7 @@ package org.example.blogmanagement.Controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.example.blogmanagement.DTOs.Post.PostInputDTO;
 import org.example.blogmanagement.DTOs.Post.PostOutputDTO;
 import org.example.blogmanagement.Services.PostService;
@@ -42,7 +43,7 @@ public class PostController {
     )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PostOutputDTO createPost(@RequestBody PostInputDTO postInputDTO){
+    public PostOutputDTO createPost(@Valid @RequestBody PostInputDTO postInputDTO){
         return postService.createPost(postInputDTO);
     }
 
@@ -119,7 +120,7 @@ public class PostController {
             }
     )
     @PatchMapping("/{id}")
-    public PostOutputDTO updatePost(@PathVariable String id, @RequestBody PostInputDTO postInputDTO){
+    public PostOutputDTO updatePost(@PathVariable String id, @Valid @RequestBody PostInputDTO postInputDTO){
         return postService.updatePost(id, postInputDTO);
     }
 
