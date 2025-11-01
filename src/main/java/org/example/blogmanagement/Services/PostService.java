@@ -30,8 +30,35 @@ public class PostService {
     @Autowired
     private CommentRepository commentRepo;
 
+    private List<CommentOutputDTO> commentDTO(List<Comment> comments) {
+        if (comments==null || comments.isEmpty()){
+            return new ArrayList<>();
+        }
+
+        return comments.stream()
+                .map(comment -> {
+                    User commentAuthor = userRepo.findById(comment.getAuthor_id())
+                            .orElseThrow(() -> new ResourceNotFound("User with id '" + comment.getAuthor_id() + "' was not found"));
+
+                    return new CommentOutputDTO(comment.getContent(), commentAuthor.getUsername(), commentAuthor.getEmail(), comment.getCreated_at());
+                })
+                .collect(Collectors.toList());
+    }
+
+    private PostOutputDTO post(Post post){
+
+        User user = userRepo.findById(post.getAuthor_id())
+                .orElseThrow(() -> new ResourceNotFound("This post is not attached to an author!"));
+
+        List<Comment> comments = commentRepo.findByPostId(post.getId());
+
+        List<CommentOutputDTO> commentDTOs = commentDTO(comments);
+
+        return new PostOutputDTO(post.getTitle(), post.getContent(), user.getUsername(), user.getEmail(), post.getCreated_at(), commentDTOs);
+    }
+
     public PostOutputDTO createPost(PostInputDTO postInputDTO) {
-        // Find the user by email from PostgreSQL
+        // Find the user by email from PostgresSQL
 
         User user = userRepo.findByEmail(postInputDTO.getAuthor_email())
                 .orElseThrow(() -> new ResourceNotFound("User with email '" + postInputDTO.getAuthor_email() + "' was not found"));
@@ -50,39 +77,17 @@ public class PostService {
         return new PostOutputDTO(post.getTitle(), post.getContent(), user.getUsername(), user.getEmail(), post.getCreated_at(), commentDTO(post.getComments()));
     }
 
-    private List<CommentOutputDTO> commentDTO(List<Comment> comments) {
-        if (comments==null || comments.isEmpty()){
-            return new ArrayList<>();
-        }
-
-        return comments.stream()
-                .map(comment -> {
-                    User commentAuthor = userRepo.findById(comment.getAuthor_id())
-                            .orElseThrow(() -> new ResourceNotFound("User with id '" + comment.getAuthor_id() + "' was not found"));
-
-                    return new CommentOutputDTO(comment.getContent(), commentAuthor.getUsername(), commentAuthor.getEmail(), comment.getCreated_at());
-                })
-                .collect(Collectors.toList());
-    }
-
     public List<PostOutputDTO> getAllPosts(){
         return postRepo.findAll()
                 .stream()
-                .map(post -> {
-                    // Looking for the user associated to a post
-                    User user = userRepo.findById(post.getAuthor_id())
-                            .orElseThrow(() -> new ResourceNotFound("This post is not attached to an author!"));
-
-                    // Fetching all the comments connected to a post
-                    List<Comment> comments = commentRepo.findByPostId(post.getId());
-
-                    // Converting the comments to comment DTOs
-                    List<CommentOutputDTO> commentDTOs = commentDTO(comments);
-
-                    // Returning the final PostOutputDTO
-                    return new PostOutputDTO(post.getTitle(), post.getContent(), user.getUsername(), user.getEmail(), post.getCreated_at(), commentDTOs);
-                })
+                .map(post -> post(post))
                 .collect(Collectors.toList());
+    }
+
+    public PostOutputDTO getPostById(String postId) {
+        return postRepo.findById(postId).map(
+                post -> post(post)
+        ).orElseThrow(() -> new ResourceNotFound("Post with id '" + postId + "' was not found"));
     }
 
 }
