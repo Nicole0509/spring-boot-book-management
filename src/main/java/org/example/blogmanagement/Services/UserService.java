@@ -2,6 +2,7 @@ package org.example.blogmanagement.Services;
 
 import org.example.blogmanagement.DTOs.User.UserInputDTO;
 import org.example.blogmanagement.DTOs.User.UserResponseDTO;
+import org.example.blogmanagement.Exceptions.ResourceAlreadyExists;
 import org.example.blogmanagement.Exceptions.ResourceNotFound;
 import org.example.blogmanagement.Models.User;
 import org.example.blogmanagement.Repositories.UserRepository;
@@ -18,6 +19,11 @@ public class UserService {
     private UserRepository userRepo;
 
     public UserResponseDTO createUser (UserInputDTO userInputDTO) {
+        //Check if an email is not already taken
+        if(userRepo.existsByEmail(userInputDTO.getEmail())) {
+            throw new ResourceAlreadyExists("User with email '" + userInputDTO.getEmail() + "' already exists!");
+        }
+
         User user = new User();
 
         user.setEmail(userInputDTO.getEmail());
@@ -46,6 +52,11 @@ public class UserService {
         // Checking if a user exists
         if(!userRepo.existsById(id)) {
             throw new ResourceNotFound("User with id '" + id + "' was not found!");
+        }
+
+        //Check if an email is not already taken
+        if(userRepo.existsByEmail(userInputDTO.getEmail())) {
+            throw new ResourceAlreadyExists("User with email '" + userInputDTO.getEmail() + "' already exists!");
         }
 
         // Updating a user
