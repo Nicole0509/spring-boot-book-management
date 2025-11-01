@@ -3,6 +3,7 @@ package org.example.blogmanagement.Controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.example.blogmanagement.DTOs.User.UserInputDTO;
 import org.example.blogmanagement.DTOs.User.UserResponseDTO;
 import org.example.blogmanagement.Services.UserService;
@@ -41,7 +42,7 @@ public class UserController {
             }
     )
     @PostMapping()
-    public UserResponseDTO createUser (@RequestBody UserInputDTO userInputDTO){
+    public UserResponseDTO createUser (@Valid @RequestBody UserInputDTO userInputDTO){
         return userService.createUser(userInputDTO);
     }
 
