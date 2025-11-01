@@ -60,4 +60,13 @@ public class UserService {
 
         return getUserById(id);
     }
+
+    public void deleteUserById(int id) {
+        // Checking if a user exists
+        if(!userRepo.existsById(id)) {
+            throw new ResourceNotFound("User with id '" + id + "' was not found!");
+        }
+
+        userRepo.deleteById(id);
+    }
 }
