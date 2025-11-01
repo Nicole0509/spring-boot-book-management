@@ -54,7 +54,7 @@ public class PostService {
 
         List<CommentOutputDTO> commentDTOs = commentDTO(comments);
 
-        return new PostOutputDTO(post.getTitle(), post.getContent(), user.getUsername(), user.getEmail(), post.getCreated_at(), commentDTOs);
+        return new PostOutputDTO(post.getTitle(), post.getContent(), user.getUsername(), user.getEmail(), post.getCreated_at(), post.getUpdated_at(), commentDTOs);
     }
 
     public PostOutputDTO createPost(PostInputDTO postInputDTO) {
@@ -74,20 +74,32 @@ public class PostService {
 
         postRepo.save(post);
 
-        return new PostOutputDTO(post.getTitle(), post.getContent(), user.getUsername(), user.getEmail(), post.getCreated_at(), commentDTO(post.getComments()));
+        return post(post);
     }
 
     public List<PostOutputDTO> getAllPosts(){
         return postRepo.findAll()
                 .stream()
-                .map(post -> post(post))
+                .map(this::post)
                 .collect(Collectors.toList());
     }
 
     public PostOutputDTO getPostById(String postId) {
-        return postRepo.findById(postId).map(
-                post -> post(post)
-        ).orElseThrow(() -> new ResourceNotFound("Post with id '" + postId + "' was not found"));
+        return postRepo.findById(postId)
+                .map(this::post)
+                .orElseThrow(() -> new ResourceNotFound("Post with id '" + postId + "' was not found"));
+    }
+
+    public PostOutputDTO updatePost(String postId, PostInputDTO postInputDTO) {
+        return postRepo.findById(postId)
+                .map(post -> {
+                    post.setTitle(postInputDTO.getTitle());
+                    post.setContent(postInputDTO.getContent());
+                    post.setUpdated_at(LocalDateTime.now());
+                    postRepo.save(post);
+
+                    return post(post);
+                }).orElseThrow(() -> new ResourceNotFound("Post with id '" + postId + "' was not found"));
     }
 
 }
