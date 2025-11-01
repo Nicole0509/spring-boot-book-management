@@ -42,4 +42,22 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFound("User with id '" + id + "' was not found!"));
     }
 
+    public UserResponseDTO updateUserById(int id, UserInputDTO userInputDTO) {
+        // Checking if a user exists
+        if(!userRepo.existsById(id)) {
+            throw new ResourceNotFound("User with id '" + id + "' was not found!");
+        }
+
+        // Updating a user
+        userRepo.findById(id).ifPresent(user -> {
+
+            user.setEmail(userInputDTO.getEmail());
+            user.setPassword(userInputDTO.getPassword());
+            user.setUsername(userInputDTO.getUsername());
+
+            userRepo.save(user);
+        });
+
+        return getUserById(id);
+    }
 }
