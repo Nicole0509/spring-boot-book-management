@@ -57,15 +57,14 @@ public class CommentService {
     }
 
 
-//    public CommentOutputDTO updateComment(CommentInputDTO commentInputDTO, String commentId) {
-//        return commentRepo.findById(commentId).ifPresent(
-//                comment -> {
-//                    comment.setContent(commentInputDTO.getContent());
-//                    commentRepo.save(comment);
-//
-//                    return new CommentOutputDTO(comment.getContent(),comment.ge)
-//
-//                }
-//        );
-//    }
+    public CommentOutputDTO updateComment(CommentInputDTO commentInputDTO, String commentId) {
+        return commentRepo.findById(commentId).map(
+                comment -> {
+                    comment.setContent(commentInputDTO.getContent());
+                    commentRepo.save(comment);
+
+                    return getAllCommentById(commentId);
+                }
+        ).orElseThrow(() -> new ResourceNotFound("Comment with ID '" + commentId + "' was not found"));
+    }
 }

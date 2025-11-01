@@ -26,4 +26,8 @@ public class CommentController {
         return commentService.getAllCommentById(id);
     }
 
+    @PatchMapping("/{id}")
+    public CommentOutputDTO updateComment(@PathVariable String id, @RequestBody CommentInputDTO commentInputDTO) {
+        return commentService.updateComment(commentInputDTO, id);
+    }
 }
