@@ -9,6 +9,7 @@ import org.example.blogmanagement.DTOs.Post.PostInputDTO;
 import org.example.blogmanagement.DTOs.Post.PostOutputDTO;
 import org.example.blogmanagement.Models.Post;
 import org.example.blogmanagement.Services.PostService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -153,4 +154,10 @@ public class PostController {
     public List<Post> findPostWithSorting( @PathVariable String  field){
         return postService.findPostWithSorting(field);
     }
+
+    @GetMapping("/page/{offset}/{pageSize}")
+    public Page<Post> getProductsWithPagination (@PathVariable int offset, @PathVariable int pageSize) {
+        return postService.getProductsWithPagination(offset, pageSize);
+    }
+
 }
