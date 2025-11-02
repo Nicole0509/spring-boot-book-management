@@ -13,6 +13,7 @@ import org.example.blogmanagement.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,11 +85,16 @@ public class PostService {
         return post(post);
     }
 
-    public List<PostOutputDTO> getAllPosts(){
-        return postRepo.findAll()
-                .stream()
-                .map(this::post)
-                .collect(Collectors.toList());
+    public Page<PostOutputDTO> getAllPosts(int page, int size, String sortBy, String direction){
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Post> postsPage = postRepo.findAll(pageable);
+
+        return postsPage.map(this::post);
     }
 
     public PostOutputDTO getPostById(String postId) {
@@ -131,12 +137,5 @@ public class PostService {
         postRepo.deleteAll(posts);
     }
 
-    public List<Post> findPostWithSorting(String field) {
-        return postRepo.findAll(Sort.by(Sort.Direction.ASC, field));
-    }
-
-    public Page<Post> getProductsWithPagination (int offset, int pageSize) {
-        return  postRepo.findAll(PageRequest.of(offset, pageSize, Sort.by(Sort.Direction.ASC, "created_at")));
-    }
 }
 

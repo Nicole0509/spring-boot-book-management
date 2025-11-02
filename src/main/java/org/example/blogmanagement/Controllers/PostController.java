@@ -1,19 +1,16 @@
 package org.example.blogmanagement.Controllers;
 
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.example.blogmanagement.DTOs.Post.PostInputDTO;
 import org.example.blogmanagement.DTOs.Post.PostOutputDTO;
-import org.example.blogmanagement.Models.Post;
 import org.example.blogmanagement.Services.PostService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/post")
@@ -50,7 +47,7 @@ public class PostController {
     }
 
     @Operation(
-            description = "This endpoint displays all posts and each one has a list comments if it has any corresponding with its id",
+            description = "This endpoint displays all posts and each one has a list comments if it has any corresponding with its id. This method also renders everything in form of pages and applies some sorting as per the user requirements.",
             summary = "Get All posts with their associated comments",
             responses = {
                     @ApiResponse(
@@ -68,8 +65,13 @@ public class PostController {
             }
     )
     @GetMapping
-    public List<PostOutputDTO> getAllPosts(){
-        return postService.getAllPosts();
+    public Page<PostOutputDTO> getAllPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "created_at") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction){
+
+        return postService.getAllPosts(page, size, sortBy, direction);
     }
 
     @Operation(
@@ -148,16 +150,6 @@ public class PostController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePost(@PathVariable String id){
         postService.deletePost(id);
-    }
-
-    @GetMapping("/sort/{field}")
-    public List<Post> findPostWithSorting( @PathVariable String  field){
-        return postService.findPostWithSorting(field);
-    }
-
-    @GetMapping("/page/{offset}/{pageSize}")
-    public Page<Post> getProductsWithPagination (@PathVariable int offset, @PathVariable int pageSize) {
-        return postService.getProductsWithPagination(offset, pageSize);
     }
 
 }
