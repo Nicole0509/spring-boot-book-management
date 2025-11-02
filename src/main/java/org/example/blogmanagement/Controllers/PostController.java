@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.example.blogmanagement.DTOs.Post.PostInputDTO;
 import org.example.blogmanagement.DTOs.Post.PostOutputDTO;
+import org.example.blogmanagement.Models.Post;
 import org.example.blogmanagement.Services.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -146,5 +147,10 @@ public class PostController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePost(@PathVariable String id){
         postService.deletePost(id);
+    }
+
+    @GetMapping("/sort/{field}")
+    public List<Post> findPostWithSorting( @PathVariable String  field){
+        return postService.findPostWithSorting(field);
     }
 }

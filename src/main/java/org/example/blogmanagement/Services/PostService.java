@@ -11,6 +11,7 @@ import org.example.blogmanagement.Repositories.CommentRepository;
 import org.example.blogmanagement.Repositories.PostRepository;
 import org.example.blogmanagement.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -126,6 +127,10 @@ public class PostService {
             commentService.deleteCommentByPostId(post.getId());
         }
         postRepo.deleteAll(posts);
+    }
+
+    public List<Post> findPostWithSorting(String field) {
+        return postRepo.findAll(Sort.by(Sort.Direction.ASC, field));
     }
 }
 

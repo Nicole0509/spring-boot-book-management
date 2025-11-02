@@ -20,7 +20,7 @@ public class CommentInputDTO {
     @Email(message = "Insert a valid email")
     private String author_email;
 
-    @NotNull(message = "post_id is mandatory")
+    @NotNull(message = "post_id is mandatory"  )
     @NotBlank(message = "post_id is mandatory")
     private String post_id;
 }
