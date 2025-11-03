@@ -103,6 +103,22 @@ public class PostService {
                 .orElseThrow(() -> new ResourceNotFound("Post with id '" + postId + "' was not found"));
     }
 
+    public Page<PostOutputDTO> getPostsByAuthor(String authorUsername, int page, int size, String sortBy, String direction) {
+
+        User user = userRepo.findByUsername(authorUsername)
+                .orElseThrow(() -> new ResourceNotFound("User with username '" + authorUsername + "' was not found"));
+
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Post> postsPage = postRepo.findByAuthorId(user.getId(), pageable);
+
+        return postsPage.map(this::post);
+    }
+
     public PostOutputDTO updatePost(String postId, PostInputDTO postInputDTO) {
         return postRepo.findById(postId)
                 .map(post -> {

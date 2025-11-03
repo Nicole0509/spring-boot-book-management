@@ -75,6 +75,39 @@ public class PostController {
     }
 
     @Operation(
+            description = "This endpoint shows all posts by the same user.",
+            summary = "Get All Post By Username",
+            responses = {
+                    @ApiResponse(
+                            description = "Success",
+                            responseCode = "200"
+                    ),
+                    @ApiResponse(
+                            description = "Not Found",
+                            responseCode = "404"
+                    ),
+                    @ApiResponse(
+                            description = "Bad Request",
+                            responseCode = "400"
+                    ),
+                    @ApiResponse(
+                            description = "Conflict",
+                            responseCode = "409"
+                    ),
+            }
+    )
+    @GetMapping("/author/{username}")
+    public Page<PostOutputDTO> getPostsByAuthor(
+            @PathVariable String username,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "created_at") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction) {
+
+        return postService.getPostsByAuthor(username, page, size, sortBy, direction);
+    }
+
+    @Operation(
             description = "This endpoint shows a single post and the corresponding corresponding comments.",
             summary = "Get A Post By Id",
             responses = {
