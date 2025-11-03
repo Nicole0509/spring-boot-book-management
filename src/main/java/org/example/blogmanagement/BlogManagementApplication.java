@@ -6,7 +6,28 @@ import org.springframework.data.mongodb.config.EnableMongoAuditing;
 
 @EnableMongoAuditing
 @SpringBootApplication
-public class BlogManagementApplication {
+public class
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BlogManagementApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(BlogManagementApplication.class, args);
