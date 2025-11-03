@@ -105,8 +105,15 @@ public class PostService {
 
     public Page<PostOutputDTO> getPostsByAuthor(String authorUsername, int page, int size, String sortBy, String direction) {
 
-        User user = userRepo.findByUsername(authorUsername)
-                .orElseThrow(() -> new ResourceNotFound("User with username '" + authorUsername + "' was not found"));
+        List<User> users = userRepo.findByUsername(authorUsername);
+
+        if (users==null || users.isEmpty()){
+            throw new ResourceNotFound("User with name '" + authorUsername + "' was not found");
+        }
+
+        List<Integer> userIds = users.stream()
+                .map(User::getId)
+                .toList();
 
         Sort sort = direction.equalsIgnoreCase("desc")
                 ? Sort.by(sortBy).descending()
@@ -114,7 +121,7 @@ public class PostService {
 
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<Post> postsPage = postRepo.findByAuthorId(user.getId(), pageable);
+        Page<Post> postsPage = postRepo.findByAuthorIdIn(userIds, pageable);
 
         return postsPage.map(this::post);
     }

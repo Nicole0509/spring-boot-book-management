@@ -14,5 +14,5 @@ public interface PostRepository extends MongoRepository<Post,String> {
 
     List<Post> findByAuthorId(int authorId);
 
-    Page<Post> findByAuthorId(int authorId, Pageable pageable);
+    Page<Post> findByAuthorIdIn(List<Integer> authorIds, Pageable pageable);
 }
