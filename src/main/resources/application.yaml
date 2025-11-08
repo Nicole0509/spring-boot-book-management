@@ -2,6 +2,11 @@ spring:
   application:
     name: BlogManagement
 
+  security:
+    user:
+      name: nicole
+      password: nicole1234!
+
   datasource:
     driver-class-name: org.postgresql.Driver
     password: Nicole0509
