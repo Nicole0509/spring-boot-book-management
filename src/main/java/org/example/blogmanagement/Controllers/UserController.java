@@ -46,6 +46,29 @@ public class UserController {
     }
 
     @Operation(
+            description = "This end point logs in an existing user through email and password.",
+            summary = "Create a new user",
+            responses = {
+                    @ApiResponse(
+                            description = "Success",
+                            responseCode = "201"
+                    ),
+                    @ApiResponse(
+                            description = "Bad Request",
+                            responseCode = "400"
+                    ),
+                    @ApiResponse(
+                            description = "Conflict",
+                            responseCode = "409"
+                    ),
+            }
+    )
+    @PostMapping("/login")
+    public String loginUser (@Valid @RequestBody UserInputDTO userInputDTO){
+        return userService.verify(userInputDTO);
+    }
+
+    @Operation(
             description = "This endpoint generates a list of all users in the DB and their emails",
             summary = "Get All Users in the DB",
             responses = {
