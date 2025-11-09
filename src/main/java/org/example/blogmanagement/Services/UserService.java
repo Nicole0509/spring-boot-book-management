@@ -7,6 +7,7 @@ import org.example.blogmanagement.Exceptions.ResourceNotFound;
 import org.example.blogmanagement.Models.User;
 import org.example.blogmanagement.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +26,9 @@ public class UserService {
     @Autowired
     private CommentService commentService;
 
-    public UserResponseDTO createUser (UserInputDTO userInputDTO) {
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12); //using 2^12 rounds of hashing
+
+    public UserResponseDTO registerUser (UserInputDTO userInputDTO) {
         //Check if an email is not already taken
         if(userRepo.existsByEmail(userInputDTO.getEmail())) {
             throw new ResourceAlreadyExists("User with email '" + userInputDTO.getEmail() + "' already exists!");
@@ -34,7 +37,7 @@ public class UserService {
         User user = new User();
 
         user.setEmail(userInputDTO.getEmail());
-        user.setPassword(userInputDTO.getPassword());
+        user.setPassword(encoder.encode(userInputDTO.getPassword()));
         user.setUsername(userInputDTO.getUsername());
 
         userRepo.save(user);

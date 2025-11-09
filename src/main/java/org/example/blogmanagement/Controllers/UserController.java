@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
 @Tag(name = "User")
 public class UserController {
 
@@ -41,9 +40,9 @@ public class UserController {
                     ),
             }
     )
-    @PostMapping()
-    public UserResponseDTO createUser (@Valid @RequestBody UserInputDTO userInputDTO){
-        return userService.createUser(userInputDTO);
+    @PostMapping("/register")
+    public UserResponseDTO registerUser (@Valid @RequestBody UserInputDTO userInputDTO){
+        return userService.registerUser(userInputDTO);
     }
 
     @Operation(
@@ -64,7 +63,7 @@ public class UserController {
                     ),
             }
     )
-    @GetMapping()
+    @GetMapping("/user")
     public List<UserResponseDTO> getAllUsers(){
         return userService.getAllUsers();
     }
@@ -91,7 +90,7 @@ public class UserController {
                     ),
             }
     )
-    @GetMapping("/{id}")
+    @GetMapping("/user/{id}")
     public UserResponseDTO getUserById(@PathVariable int id){
         return userService.getUserById(id);
     }
@@ -118,7 +117,7 @@ public class UserController {
                     ),
             }
     )
-    @PutMapping("/{id}")
+    @PutMapping("/user/{id}")
     public UserResponseDTO updateUserById(@PathVariable int id,@Valid @RequestBody UserInputDTO userInputDTO){
         return userService.updateUserById(id, userInputDTO);
     }
@@ -141,7 +140,7 @@ public class UserController {
                     ),
             }
     )
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/user/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUserById(@PathVariable int id){
         userService.deleteUserById(id);
