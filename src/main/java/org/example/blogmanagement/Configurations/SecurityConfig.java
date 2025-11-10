@@ -32,6 +32,7 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(request ->
                         request.requestMatchers("/login","/register").permitAll()
+                                .requestMatchers("/user/**").hasRole("ADMIN")
                                 .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

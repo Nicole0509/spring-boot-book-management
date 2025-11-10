@@ -13,6 +13,14 @@ spring:
     username: postgres
     url: jdbc:postgresql://localhost:5432/blog_management
 
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
   mongodb:
     uri: mongodb://localhost:27017/blog_management
 

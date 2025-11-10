@@ -33,6 +33,9 @@ public class User {
     @Column(name = "updated_at")
     private LocalDateTime  updated_at;
 
+    @Enumerated(EnumType.STRING)
+    private Roles role;
+
     @PrePersist
     protected void onCreate() {
         this.created_at = LocalDateTime.now();
