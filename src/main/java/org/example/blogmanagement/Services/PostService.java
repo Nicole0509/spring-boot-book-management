@@ -58,6 +58,24 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
+    private void postBelongsToUser (HttpServletRequest request, String postId) {
+        //Get the logged-in email
+        String email = jwtService.getEmailFromRequest(request);
+
+        //Find user email in the DB
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFound("User with email '" + email + "' was not found"));
+
+        //Load the post from DB
+        Post post = postRepo.findById(postId)
+                .orElseThrow(() -> new ResourceNotFound("Post with id '" + postId + "' not found"));
+
+        //Check if the post belongs to the user
+        if(post.getAuthorId() != user.getId()){
+            throw new AccessDeniedException("You cannot edit someone else's post");
+        }
+    }
+
     private PostOutputDTO post(Post post){
 
         User user = userRepo.findById(post.getAuthorId())
@@ -134,52 +152,29 @@ public class PostService {
     }
 
     public PostOutputDTO updatePost(String postId, PostInputDTO postInputDTO, HttpServletRequest request) {
-        //Get the logged-in email
-        String email = jwtService.getEmailFromRequest(request);
 
-        //Find user email in the DB
-        User user = userRepo.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFound("User with email '" + email + "' was not found"));
+        postBelongsToUser(request,postId);
 
-        //Load the post from DB
-        Post post = postRepo.findById(postId)
-                .orElseThrow(() -> new ResourceNotFound("Post with id '" + postId + "' not found"));
+        return postRepo.findById(postId)
+                .map(post -> {
+                    post.setTitle(postInputDTO.getTitle());
+                    post.setContent(postInputDTO.getContent());
+                    post.setUpdated_at(LocalDateTime.now());
+                    postRepo.save(post);
 
-        //Check if the post belongs to the user
-        if(post.getAuthorId() != user.getId()){
-            throw new AccessDeniedException("You cannot edit someone else's post");
-        }
-
-        //Update the post
-        post.setTitle(postInputDTO.getTitle());
-        post.setContent(postInputDTO.getContent());
-        post.setUpdated_at(LocalDateTime.now());
-        postRepo.save(post);
-
-        return post(post);
+                    return post(post);
+                }).orElseThrow(() -> new ResourceNotFound("Post with id '" + postId + "' was not found"));
     }
 
     @Transactional
     public void deletePost(String postId, HttpServletRequest request) {
-        //Get the logged-in email
-        String email = jwtService.getEmailFromRequest(request);
 
-        //Find user email in the DB
-        User user = userRepo.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFound("User with email '" + email + "' was not found"));
-
-        //Load the post from DB
         if(!postRepo.existsById(postId)){
             throw new ResourceNotFound("Post with id '" + postId + "' was not found");
         }
 
-        Post post = postRepo.findById(postId)
-                .orElseThrow(() -> new ResourceNotFound("Post with id '" + postId + "' not found"));
-
-        //Check if the post belongs to the user
-        if(post.getAuthorId() != user.getId()){
-            throw new AccessDeniedException("You cannot edit someone else's post");
-        }
+        //check if the post belongs to the current user
+        postBelongsToUser(request,postId);
 
         commentService.deleteCommentByPostId(postId);
 

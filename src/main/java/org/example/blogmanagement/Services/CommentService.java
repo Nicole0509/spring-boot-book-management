@@ -3,7 +3,6 @@ package org.example.blogmanagement.Services;
 import jakarta.servlet.http.HttpServletRequest;
 import org.example.blogmanagement.DTOs.Comment.CommentInputDTO;
 import org.example.blogmanagement.DTOs.Comment.CommentOutputDTO;
-import org.example.blogmanagement.DTOs.Post.PostOutputDTO;
 import org.example.blogmanagement.Exceptions.ResourceNotFound;
 import org.example.blogmanagement.Models.Comment;
 import org.example.blogmanagement.Models.Post;
@@ -14,9 +13,6 @@ import org.example.blogmanagement.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 public class CommentService {
@@ -35,6 +31,24 @@ public class CommentService {
 
     private CommentOutputDTO comment (Comment comment, User user){
         return new CommentOutputDTO(comment.getContent(), user.getUsername(), user.getEmail(), comment.getCreated_at());
+    }
+
+    private void commentBelongsToUser(HttpServletRequest request, String commentId) {
+        //Get the logged-in email
+        String email = jwtService.getEmailFromRequest(request);
+
+        //Find user email in the DB
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFound("User with email '" + email + "' was not found"));
+
+        //Load the comment from DB
+        Comment comment  = commentRepo.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFound("Comment with id '" + commentId + "' not found"));
+
+        //Check if the comment belongs to the user
+        if(comment.getAuthorId() != user.getId()){
+            throw new AccessDeniedException("You cannot edit someone else's comment");
+        }
     }
 
     public CommentOutputDTO createComment(CommentInputDTO commentInputDTO, HttpServletRequest request) {
@@ -74,55 +88,28 @@ public class CommentService {
 
     public CommentOutputDTO updateComment(CommentInputDTO commentInputDTO, String commentId, HttpServletRequest request) {
 
-        //Get the logged-in email
-        String email = jwtService.getEmailFromRequest(request);
-
-        //Find user email in the DB
-        User user = userRepo.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFound("User with email '" + email + "' was not found"));
-
-        //Load the post from DB
-        Post post = postRepo.findById(commentInputDTO.getPost_id())
-                .orElseThrow(() -> new ResourceNotFound("Post with id '" + commentInputDTO.getPost_id() + "' not found"));
-
-        //Load the comment from DB
-        Comment comment  = commentRepo.findById(commentId)
-                .orElseThrow(() -> new ResourceNotFound("Comment with id '" + commentId + "' not found"));
-
-        //Check if the comment belongs to the user
-        if(comment.getAuthorId() != user.getId()){
-            throw new AccessDeniedException("You cannot edit someone else's comment");
-        }
+        //Check if a comment belongs to the current user
+        commentBelongsToUser(request, commentId);
 
         // Patching a comment's content
-        comment.setContent(commentInputDTO.getContent());
-        comment.setUpdated_at(LocalDateTime.now());
-        commentRepo.save(comment);
+        return commentRepo.findById(commentId).map(
+                comment -> {
+                    comment.setContent(commentInputDTO.getContent());
+                    commentRepo.save(comment);
 
-        return comment(comment, user);
+                    return getAllCommentById(commentId);
+                }
+        ).orElseThrow(() -> new ResourceNotFound("Comment with ID '" + commentId + "' was not found"));
     }
 
     public void deleteComment(String commentId, HttpServletRequest request) {
-        //Get the logged-in email
-        String email = jwtService.getEmailFromRequest(request);
-
-        //Find user email in the DB
-        User user = userRepo.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFound("User with email '" + email + "' was not found"));
-
         //Load the comment from DB
-
         if (!commentRepo.existsById(commentId)) {
             throw new ResourceNotFound("Comment with ID '" + commentId + "' was not found");
         }
 
-        Comment comment  = commentRepo.findById(commentId)
-                .orElseThrow(() -> new ResourceNotFound("Comment with id '" + commentId + "' not found"));
-
-        //Check if the comment belongs to the user
-        if(comment.getAuthorId() != user.getId()){
-            throw new AccessDeniedException("You cannot edit someone else's comment");
-        }
+        //Check if a comment belongs to the current user
+        commentBelongsToUser(request, commentId);
 
         commentRepo.deleteById(commentId);
     }
