@@ -102,10 +102,28 @@ public class CommentService {
         return comment(comment, user);
     }
 
-    public void deleteComment(String commentId) {
+    public void deleteComment(String commentId, HttpServletRequest request) {
+        //Get the logged-in email
+        String email = jwtService.getEmailFromRequest(request);
+
+        //Find user email in the DB
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFound("User with email '" + email + "' was not found"));
+
+        //Load the comment from DB
+
         if (!commentRepo.existsById(commentId)) {
             throw new ResourceNotFound("Comment with ID '" + commentId + "' was not found");
         }
+
+        Comment comment  = commentRepo.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFound("Comment with id '" + commentId + "' not found"));
+
+        //Check if the comment belongs to the user
+        if(comment.getAuthorId() != user.getId()){
+            throw new AccessDeniedException("You cannot edit someone else's comment");
+        }
+
         commentRepo.deleteById(commentId);
     }
 

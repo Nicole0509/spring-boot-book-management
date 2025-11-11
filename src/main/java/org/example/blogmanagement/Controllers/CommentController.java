@@ -116,7 +116,7 @@ public class CommentController {
     )
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteComment(@PathVariable String id) {
-        commentService.deleteComment(id);
+    public void deleteComment(@PathVariable String id, HttpServletRequest request) {
+        commentService.deleteComment(id, request);
     }
 }

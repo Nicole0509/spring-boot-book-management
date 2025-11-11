@@ -182,8 +182,8 @@ public class PostController {
     )
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletePost(@PathVariable String id){
-        postService.deletePost(id);
+    public void deletePost(@PathVariable String id, HttpServletRequest request){
+        postService.deletePost(id, request);
     }
 
 }

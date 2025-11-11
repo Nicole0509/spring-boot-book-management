@@ -160,9 +160,25 @@ public class PostService {
     }
 
     @Transactional
-    public void deletePost(String postId) {
+    public void deletePost(String postId, HttpServletRequest request) {
+        //Get the logged-in email
+        String email = jwtService.getEmailFromRequest(request);
+
+        //Find user email in the DB
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFound("User with email '" + email + "' was not found"));
+
+        //Load the post from DB
         if(!postRepo.existsById(postId)){
             throw new ResourceNotFound("Post with id '" + postId + "' was not found");
+        }
+
+        Post post = postRepo.findById(postId)
+                .orElseThrow(() -> new ResourceNotFound("Post with id '" + postId + "' not found"));
+
+        //Check if the post belongs to the user
+        if(post.getAuthorId() != user.getId()){
+            throw new AccessDeniedException("You cannot edit someone else's post");
         }
 
         commentService.deleteCommentByPostId(postId);
