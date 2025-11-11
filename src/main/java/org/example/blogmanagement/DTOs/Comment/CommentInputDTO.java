@@ -15,11 +15,6 @@ public class CommentInputDTO {
     @NotBlank(message = "content is mandatory")
     private String content;
 
-    @NotNull(message = "email is mandatory")
-    @NotBlank(message = "email is mandatory")
-    @Email(message = "Insert a valid email")
-    private String author_email;
-
     @NotNull(message = "post_id is mandatory"  )
     @NotBlank(message = "post_id is mandatory")
     private String post_id;

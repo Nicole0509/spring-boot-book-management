@@ -24,8 +24,4 @@ public class PostInputDTO {
     @Size(min = 5, message = "content must be at least characters.")
     private String content;
 
-    @NotNull(message = "email is mandatory")
-    @NotBlank(message = "email is mandatory")
-    @Email(message = "Insert a valid email")
-    private String author_email;
 }

@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.example.blogmanagement.DTOs.Authentication.LoginDTO;
+import org.example.blogmanagement.DTOs.Authentication.RegistrationDTO;
 import org.example.blogmanagement.DTOs.User.UserInputDTO;
 import org.example.blogmanagement.DTOs.User.UserResponseDTO;
 import org.example.blogmanagement.Services.UserService;
@@ -41,8 +43,8 @@ public class UserController {
             }
     )
     @PostMapping("/register")
-    public UserResponseDTO registerUser (@Valid @RequestBody UserInputDTO userInputDTO){
-        return userService.registerUser(userInputDTO);
+    public UserResponseDTO registerUser (@Valid @RequestBody RegistrationDTO registrationDTO){
+        return userService.registerUser(registrationDTO);
     }
 
     @Operation(
@@ -64,8 +66,8 @@ public class UserController {
             }
     )
     @PostMapping("/login")
-    public String loginUser (@Valid @RequestBody UserInputDTO userInputDTO){
-        return userService.verify(userInputDTO);
+    public String loginUser (@Valid @RequestBody LoginDTO loginDTO){
+        return userService.verify(loginDTO);
     }
 
     @Operation(

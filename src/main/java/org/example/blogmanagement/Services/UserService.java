@@ -1,6 +1,8 @@
 package org.example.blogmanagement.Services;
 
 import jakarta.validation.Valid;
+import org.example.blogmanagement.DTOs.Authentication.LoginDTO;
+import org.example.blogmanagement.DTOs.Authentication.RegistrationDTO;
 import org.example.blogmanagement.DTOs.User.UserInputDTO;
 import org.example.blogmanagement.DTOs.User.UserResponseDTO;
 import org.example.blogmanagement.Exceptions.ResourceAlreadyExists;
@@ -38,17 +40,17 @@ public class UserService {
 
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12); //using 2^12 rounds of hashing
 
-    public UserResponseDTO registerUser (UserInputDTO userInputDTO) {
+    public UserResponseDTO registerUser (RegistrationDTO registrationDTO) {
         //Check if an email is not already taken
-        if(userRepo.existsByEmail(userInputDTO.getEmail())) {
-            throw new ResourceAlreadyExists("User with email '" + userInputDTO.getEmail() + "' already exists!");
+        if(userRepo.existsByEmail(registrationDTO.getEmail())) {
+            throw new ResourceAlreadyExists("User with email '" + registrationDTO.getEmail() + "' already exists!");
         }
 
         User user = new User();
 
-        user.setEmail(userInputDTO.getEmail());
-        user.setPassword(encoder.encode(userInputDTO.getPassword()));
-        user.setUsername(userInputDTO.getUsername());
+        user.setEmail(registrationDTO.getEmail());
+        user.setPassword(encoder.encode(registrationDTO.getPassword()));
+        user.setUsername(registrationDTO.getUsername());
 
         userRepo.save(user);
 
@@ -103,14 +105,14 @@ public class UserService {
         userRepo.deleteById(id);
     }
 
-    public String verify(@Valid UserInputDTO userInputDTO)  {
+    public String verify(@Valid LoginDTO loginDTO)  {
         Authentication authentication = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        userInputDTO.getEmail(),
-                        userInputDTO.getPassword()));
+                        loginDTO.getEmail(),
+                        loginDTO.getPassword()));
 
         if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(userInputDTO.getEmail());
+            return jwtService.generateToken(loginDTO.getEmail());
         }
 
         return "fail";
