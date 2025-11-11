@@ -1,5 +1,6 @@
 package org.example.blogmanagement.Services;
 
+import jakarta.validation.Valid;
 import org.example.blogmanagement.DTOs.User.UserInputDTO;
 import org.example.blogmanagement.DTOs.User.UserResponseDTO;
 import org.example.blogmanagement.Exceptions.ResourceAlreadyExists;
@@ -7,6 +8,10 @@ import org.example.blogmanagement.Exceptions.ResourceNotFound;
 import org.example.blogmanagement.Models.User;
 import org.example.blogmanagement.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +30,15 @@ public class UserService {
     @Autowired
     private CommentService commentService;
 
-    public UserResponseDTO createUser (UserInputDTO userInputDTO) {
+    @Autowired
+    private AuthenticationManager authManager;
+
+    @Autowired
+    private JWTService jwtService;
+
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12); //using 2^12 rounds of hashing
+
+    public UserResponseDTO registerUser (UserInputDTO userInputDTO) {
         //Check if an email is not already taken
         if(userRepo.existsByEmail(userInputDTO.getEmail())) {
             throw new ResourceAlreadyExists("User with email '" + userInputDTO.getEmail() + "' already exists!");
@@ -34,7 +47,7 @@ public class UserService {
         User user = new User();
 
         user.setEmail(userInputDTO.getEmail());
-        user.setPassword(userInputDTO.getPassword());
+        user.setPassword(encoder.encode(userInputDTO.getPassword()));
         user.setUsername(userInputDTO.getUsername());
 
         userRepo.save(user);
@@ -88,5 +101,18 @@ public class UserService {
         commentService.deleteCommentByAuthorId(id);
         postService.deletePostByAuthorId(id);
         userRepo.deleteById(id);
+    }
+
+    public String verify(@Valid UserInputDTO userInputDTO)  {
+        Authentication authentication = authManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        userInputDTO.getEmail(),
+                        userInputDTO.getPassword()));
+
+        if (authentication.isAuthenticated()) {
+            return jwtService.generateToken(userInputDTO.getEmail());
+        }
+
+        return "fail";
     }
 }

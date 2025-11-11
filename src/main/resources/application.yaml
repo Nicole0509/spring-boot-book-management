@@ -2,11 +2,24 @@ spring:
   application:
     name: BlogManagement
 
+  security:
+    user:
+      name: nicole
+      password: nicole1234!
+
   datasource:
     driver-class-name: org.postgresql.Driver
     password: Nicole0509
     username: postgres
     url: jdbc:postgresql://localhost:5432/blog_management
+
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
 
   mongodb:
     uri: mongodb://localhost:27017/blog_management

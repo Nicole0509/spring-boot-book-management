@@ -27,7 +27,7 @@ public class CommentService {
     private PostRepository postRepo;
 
     public CommentOutputDTO createComment(CommentInputDTO commentInputDTO) {
-        // Find the user by email from PostgreSQL
+        // Find the user by email from PostgresSQL
         User user = userRepo.findByEmail(commentInputDTO.getAuthor_email())
                 .orElseThrow(() -> new ResourceNotFound("User with email '" + commentInputDTO.getAuthor_email() + "' was not found"));
 

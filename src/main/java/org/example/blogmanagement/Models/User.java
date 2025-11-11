@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -33,6 +32,9 @@ public class User {
 
     @Column(name = "updated_at")
     private LocalDateTime  updated_at;
+
+    @Enumerated(EnumType.STRING)
+    private Roles role;
 
     @PrePersist
     protected void onCreate() {
