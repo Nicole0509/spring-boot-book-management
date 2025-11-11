@@ -19,10 +19,6 @@ public class CommentController {
     @Autowired
     private CommentService commentService;
 
-    public CommentController(CommentService commentService) {
-        this.commentService = commentService;
-    }
-
     @Operation(
             description = "This end point creates a new comment and assigns it to an author id and a post id to create a relationship.",
             summary = "Create a new comment",
@@ -96,8 +92,8 @@ public class CommentController {
             }
     )
     @PatchMapping("/{id}")
-    public CommentOutputDTO updateComment(@PathVariable String id, @Valid @RequestBody CommentInputDTO commentInputDTO) {
-        return commentService.updateComment(commentInputDTO, id);
+    public CommentOutputDTO updateComment(@PathVariable String id, @Valid @RequestBody CommentInputDTO commentInputDTO, HttpServletRequest request) {
+        return commentService.updateComment(commentInputDTO, id, request);
     }
 
     @Operation(

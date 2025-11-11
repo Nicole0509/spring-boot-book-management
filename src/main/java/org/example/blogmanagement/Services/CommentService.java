@@ -3,6 +3,7 @@ package org.example.blogmanagement.Services;
 import jakarta.servlet.http.HttpServletRequest;
 import org.example.blogmanagement.DTOs.Comment.CommentInputDTO;
 import org.example.blogmanagement.DTOs.Comment.CommentOutputDTO;
+import org.example.blogmanagement.DTOs.Post.PostOutputDTO;
 import org.example.blogmanagement.Exceptions.ResourceNotFound;
 import org.example.blogmanagement.Models.Comment;
 import org.example.blogmanagement.Models.Post;
@@ -11,9 +12,11 @@ import org.example.blogmanagement.Repositories.CommentRepository;
 import org.example.blogmanagement.Repositories.PostRepository;
 import org.example.blogmanagement.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class CommentService {
@@ -29,6 +32,10 @@ public class CommentService {
 
     @Autowired
     private JWTService jwtService;
+
+    private CommentOutputDTO comment (Comment comment, User user){
+        return new CommentOutputDTO(comment.getContent(), user.getUsername(), user.getEmail(), comment.getCreated_at());
+    }
 
     public CommentOutputDTO createComment(CommentInputDTO commentInputDTO, HttpServletRequest request) {
         //Extract Email from claims
@@ -51,7 +58,7 @@ public class CommentService {
 
         commentRepo.save(comment);
 
-        return new CommentOutputDTO(comment.getContent(), user.getUsername(), user.getEmail(), comment.getCreated_at());
+        return comment(comment, user);
     }
 
     public CommentOutputDTO getAllCommentById(String id) {
@@ -60,24 +67,39 @@ public class CommentService {
                     User user = userRepo.findById(comment.getAuthorId())
                             .orElseThrow(() -> new ResourceNotFound("This comment is not attached to an author"));
 
-                    return new CommentOutputDTO(comment.getContent(), user.getUsername(), user.getEmail(), comment.getCreated_at());
+                    return comment(comment, user);
                 })
                 .orElseThrow(() -> new ResourceNotFound("Comment with ID '" + id + "' was not found"));
     }
 
+    public CommentOutputDTO updateComment(CommentInputDTO commentInputDTO, String commentId, HttpServletRequest request) {
 
-    public CommentOutputDTO updateComment(CommentInputDTO commentInputDTO, String commentId) {
+        //Get the logged-in email
+        String email = jwtService.getEmailFromRequest(request);
+
+        //Find user email in the DB
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFound("User with email '" + email + "' was not found"));
+
+        //Load the post from DB
+        Post post = postRepo.findById(commentInputDTO.getPost_id())
+                .orElseThrow(() -> new ResourceNotFound("Post with id '" + commentInputDTO.getPost_id() + "' not found"));
+
+        //Load the comment from DB
+        Comment comment  = commentRepo.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFound("Comment with id '" + commentId + "' not found"));
+
+        //Check if the comment belongs to the user
+        if(comment.getAuthorId() != user.getId()){
+            throw new AccessDeniedException("You cannot edit someone else's comment");
+        }
 
         // Patching a comment's content
-        return commentRepo.findById(commentId).map(
-                comment -> {
-                    comment.setContent(commentInputDTO.getContent());
-                    comment.setUpdated_at(LocalDateTime.now());
-                    commentRepo.save(comment);
+        comment.setContent(commentInputDTO.getContent());
+        comment.setUpdated_at(LocalDateTime.now());
+        commentRepo.save(comment);
 
-                    return getAllCommentById(commentId);
-                }
-        ).orElseThrow(() -> new ResourceNotFound("Comment with ID '" + commentId + "' was not found"));
+        return comment(comment, user);
     }
 
     public void deleteComment(String commentId) {

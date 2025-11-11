@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,7 +71,7 @@ public class PostService {
     }
 
     public PostOutputDTO createPost(PostInputDTO postInputDTO, HttpServletRequest request) {
-        //Extract Email from claims
+        //Extract Current Email from claims
         String email = jwtService.getEmailFromRequest(request);
 
         // Find the user by email from PostgresSQL
@@ -132,16 +133,30 @@ public class PostService {
         return postsPage.map(this::post);
     }
 
-    public PostOutputDTO updatePost(String postId, PostInputDTO postInputDTO) {
-        return postRepo.findById(postId)
-                .map(post -> {
-                    post.setTitle(postInputDTO.getTitle());
-                    post.setContent(postInputDTO.getContent());
-                    post.setUpdated_at(LocalDateTime.now());
-                    postRepo.save(post);
+    public PostOutputDTO updatePost(String postId, PostInputDTO postInputDTO, HttpServletRequest request) {
+        //Get the logged-in email
+        String email = jwtService.getEmailFromRequest(request);
 
-                    return post(post);
-                }).orElseThrow(() -> new ResourceNotFound("Post with id '" + postId + "' was not found"));
+        //Find user email in the DB
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFound("User with email '" + email + "' was not found"));
+
+        //Load the post from DB
+        Post post = postRepo.findById(postId)
+                .orElseThrow(() -> new ResourceNotFound("Post with id '" + postId + "' not found"));
+
+        //Check if the post belongs to the user
+        if(post.getAuthorId() != user.getId()){
+            throw new AccessDeniedException("You cannot edit someone else's post");
+        }
+
+        //Update the post
+        post.setTitle(postInputDTO.getTitle());
+        post.setContent(postInputDTO.getContent());
+        post.setUpdated_at(LocalDateTime.now());
+        postRepo.save(post);
+
+        return post(post);
     }
 
     @Transactional

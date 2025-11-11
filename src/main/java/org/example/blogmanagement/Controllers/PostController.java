@@ -158,8 +158,8 @@ public class PostController {
             }
     )
     @PatchMapping("/{id}")
-    public PostOutputDTO updatePost(@PathVariable String id, @Valid @RequestBody PostInputDTO postInputDTO){
-        return postService.updatePost(id, postInputDTO);
+    public PostOutputDTO updatePost(@PathVariable String id, @Valid @RequestBody PostInputDTO postInputDTO, HttpServletRequest request){
+        return postService.updatePost(id, postInputDTO, request);
     }
 
     @Operation(
