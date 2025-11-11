@@ -1,5 +1,6 @@
 package org.example.blogmanagement.Services;
 
+import org.example.blogmanagement.Exceptions.ResourceNotFound;
 import org.example.blogmanagement.Models.User;
 import org.example.blogmanagement.Models.UserPrincipal;
 import org.example.blogmanagement.Repositories.UserRepository;

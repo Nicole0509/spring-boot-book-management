@@ -1,13 +1,14 @@
-package org.example.blogmanagement.Configurations;
+package org.example.blogmanagement.Filters;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.example.blogmanagement.Models.User;
+import org.example.blogmanagement.Models.UserPrincipal;
 import org.example.blogmanagement.Services.JWTService;
 import org.example.blogmanagement.Services.UserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,12 +19,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
-public class JWTFilter extends OncePerRequestFilter {
+public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     private JWTService jwtService;
 
     @Autowired
-    ApplicationContext context;
+    private UserDetailService userDetailService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -31,27 +32,24 @@ public class JWTFilter extends OncePerRequestFilter {
         String token = null;
         String email = null;
 
-        if(authHeader != null && authHeader.startsWith("Bearer ")){
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
             email = jwtService.extractUserName(token);
         }
 
-        if(email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UserDetails userDetails =context.getBean(UserDetailService.class).loadUserByUsername(email);
+            UserDetails userDetails = userDetailService.loadUserByUsername(email);
 
-            if(jwtService.validateToken(token,userDetails)){
+            if(jwtService.validateToken(email, userDetails, token)){
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authToken);
-
-
             }
         }
-
         filterChain.doFilter(request,response);
     }
 }

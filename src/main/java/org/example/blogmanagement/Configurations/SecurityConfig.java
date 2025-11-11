@@ -1,5 +1,6 @@
 package org.example.blogmanagement.Configurations;
 
+import org.example.blogmanagement.Filters.JwtAuthFilter;
 import org.example.blogmanagement.Services.UserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -25,19 +26,21 @@ public class SecurityConfig {
     private UserDetailService userDetailService;
 
     @Autowired
-    private JWTFilter jwtFilter;
+    private JwtAuthFilter jwtAuthFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http)  throws Exception {
 
-        http.authorizeHttpRequests(request ->
-                        request.requestMatchers("/login","/register").permitAll()
-                                .requestMatchers("/user/**").hasRole("ADMIN")
-                                .anyRequest().authenticated())
-                .httpBasic(Customizer.withDefaults())
+        http.csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(request ->request
+                        .requestMatchers("/login","/register").permitAll()
+                        .requestMatchers("/user/**").hasRole("ADMIN")
+                        .requestMatchers("/blog/**", "/comment/**").hasRole("USER")
+                        .anyRequest().authenticated())
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .csrf(AbstractHttpConfigurer::disable)
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .httpBasic(Customizer.withDefaults());
+
 
         return http.build();
     }

@@ -2,11 +2,6 @@ spring:
   application:
     name: BlogManagement
 
-  security:
-    user:
-      name: nicole
-      password: nicole1234!
-
   datasource:
     driver-class-name: org.postgresql.Driver
     password: Nicole0509
@@ -17,7 +12,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-    show-sql: true
+#    show-sql: true
     hibernate:
       ddl-auto: update
 
@@ -41,3 +36,7 @@ management:
 
     env:
       show-values: never
+
+authentication:
+  secret:
+    key: owT1xfpF8VX4k9gqAZCDbQP9z4yYiOYntjxe1AXZmEM=ELSW60cNyz8pBj26aTe4IU90IqPHSVBft4T8MQXiLR8=
