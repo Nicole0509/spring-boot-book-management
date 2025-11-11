@@ -1,5 +1,6 @@
 package org.example.blogmanagement.Services;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.example.blogmanagement.DTOs.Comment.CommentInputDTO;
 import org.example.blogmanagement.DTOs.Comment.CommentOutputDTO;
 import org.example.blogmanagement.Exceptions.ResourceNotFound;
@@ -26,10 +27,16 @@ public class CommentService {
     @Autowired
     private PostRepository postRepo;
 
-    public CommentOutputDTO createComment(CommentInputDTO commentInputDTO) {
+    @Autowired
+    private JWTService jwtService;
+
+    public CommentOutputDTO createComment(CommentInputDTO commentInputDTO, HttpServletRequest request) {
+        //Extract Email from claims
+        String email = jwtService.getEmailFromRequest(request);
+
         // Find the user by email from PostgresSQL
-        User user = userRepo.findByEmail(commentInputDTO.getAuthor_email())
-                .orElseThrow(() -> new ResourceNotFound("User with email '" + commentInputDTO.getAuthor_email() + "' was not found"));
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFound("User with email '" + email + "' was not found"));
 
         // Check if a post exists
         Post post = postRepo.findById(commentInputDTO.getPost_id())

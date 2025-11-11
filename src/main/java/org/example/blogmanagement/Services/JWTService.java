@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import org.example.blogmanagement.Exceptions.ResourceNotFound;
 import org.example.blogmanagement.Models.User;
 import org.example.blogmanagement.Repositories.UserRepository;
@@ -76,4 +77,16 @@ public class JWTService {
     private boolean isTokenExpired(String token) {
         return extractClaims(token).getExpiration().before(new Date());
     }
+
+    public String getEmailFromRequest(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return null; // caller will decide what to do
+        }
+
+        String token = authHeader.substring(7);
+        return extractUserName(token);
+    }
+
 }

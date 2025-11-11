@@ -1,5 +1,6 @@
 package org.example.blogmanagement.Services;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.example.blogmanagement.DTOs.Comment.CommentOutputDTO;
 import org.example.blogmanagement.DTOs.Post.PostInputDTO;
 import org.example.blogmanagement.DTOs.Post.PostOutputDTO;
@@ -38,6 +39,9 @@ public class PostService {
     @Autowired
     private CommentService commentService;
 
+    @Autowired
+    private JWTService jwtService;
+
     private List<CommentOutputDTO> commentDTO(List<Comment> comments) {
         if (comments==null || comments.isEmpty()){
             return new ArrayList<>();
@@ -65,11 +69,13 @@ public class PostService {
         return new PostOutputDTO(post.getTitle(), post.getContent(), user.getUsername(), user.getEmail(), post.getCreated_at(), post.getUpdated_at(), commentDTOs);
     }
 
-    public PostOutputDTO createPost(PostInputDTO postInputDTO) {
-        // Find the user by email from PostgresSQL
+    public PostOutputDTO createPost(PostInputDTO postInputDTO, HttpServletRequest request) {
+        //Extract Email from claims
+        String email = jwtService.getEmailFromRequest(request);
 
-        User user = userRepo.findByEmail(postInputDTO.getAuthor_email())
-                .orElseThrow(() -> new ResourceNotFound("User with email '" + postInputDTO.getAuthor_email() + "' was not found"));
+        // Find the user by email from PostgresSQL
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFound("User with email '" + email + "' was not found"));
 
         // Create A Post
         Post post  = new Post();

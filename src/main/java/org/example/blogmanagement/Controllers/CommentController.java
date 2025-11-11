@@ -3,6 +3,7 @@ package org.example.blogmanagement.Controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.example.blogmanagement.DTOs.Comment.CommentInputDTO;
 import org.example.blogmanagement.DTOs.Comment.CommentOutputDTO;
@@ -41,8 +42,8 @@ public class CommentController {
             }
     )
     @PostMapping
-    public CommentOutputDTO createComment(@Valid @RequestBody CommentInputDTO commentInputDTO) {
-        return commentService.createComment(commentInputDTO);
+    public CommentOutputDTO createComment(@Valid @RequestBody CommentInputDTO commentInputDTO, HttpServletRequest request) {
+        return commentService.createComment(commentInputDTO, request);
     }
 
     @Operation(
